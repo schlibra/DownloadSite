@@ -5,6 +5,7 @@ backend/assets/
 backend/temp/
 backend/upload/
 backend/mail.ini
+backend/main.html
 backend/mysql.ini
 frontend/node_modules/
 frontend/dist/
