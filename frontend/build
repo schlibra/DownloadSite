@@ -1,0 +1,5 @@
+#!/bin/bash
+rm -vrf ../backend/assets
+rm -v ../backend/main.html
+cp -v dist/index.html ../backend/main.html
+cp -vr dist/assets ../backend/assets
