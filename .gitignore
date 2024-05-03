@@ -7,5 +7,6 @@ backend/upload/
 backend/mail.ini
 backend/main.html
 backend/mysql.ini
+backend/backend.zip
 frontend/node_modules/
 frontend/dist/
