@@ -13,11 +13,36 @@ import '@mdui/icons/arrow-back'
 import '@mdui/icons/lock'
 import axios from "axios";
 import {alert} from "mdui";
+import {confirm} from "mdui/functions/confirm.js";
 
 const isLogin = ref(localStorage.getItem("token"));
 const list = ref([]);
 document.title = "文件列表 | 下载站"
 onMounted(()=>{
+  if (isLogin.value){
+    axios.post("/?action=getInfo", {}, {
+      headers: {
+        Authorization: "Bearer "+isLogin.value
+      }
+    }).then(res => {
+      if (res.data.code !== 200){
+        confirm({
+          headline: "登录状态失效",
+          description: "登录状态失效："+res.data.msg,
+          confirmText: "重新登录",
+          cancelText: "退出登录",
+          onConfirm: () => {
+            localStorage.removeItem("token")
+            router.push("/login")
+          },
+          onCancel: () => {
+            localStorage.removeItem("token")
+            location.reload()
+          }
+        })
+      }
+    })
+  }
   axios.post("/?action=fileList").then(res=>{
     if (res.data.code===200){
       list.value = res.data.data;
