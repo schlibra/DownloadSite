@@ -12,6 +12,7 @@ import { confirm } from 'mdui/functions/confirm'
 import {onMounted, ref} from 'vue'
 import router from "@/router/index.js";
 import {alert} from "mdui";
+import axios from "axios";
 
 const isLogin = ref(localStorage.getItem("token"));
 const fileCode = ref("");
@@ -26,6 +27,30 @@ document.title = "下载站"
 onMounted(()=>{
   device.value = /Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent) ? "mobile" : "pc";
   console.log(device.value)
+  if (isLogin.value){
+    axios.post("/?action=getInfo", {}, {
+      headers: {
+        Authorization: "Bearer "+isLogin.value
+      }
+    }).then(res => {
+      if (res.data.code !== 200){
+        confirm({
+          headline: "登录状态失效",
+          description: "登录状态失效："+res.data.msg,
+          confirmText: "重新登录",
+          cancelText: "退出登录",
+          onConfirm: () => {
+            localStorage.removeItem("token")
+            router.push("/login")
+          },
+          onCancel: () => {
+            localStorage.removeItem("token")
+            location.reload()
+          }
+        })
+      }
+    })
+  }
 });
 function gotoList(){
   router.push({
