@@ -8,9 +8,9 @@ include("Mail.php");
 include("MySQL.php");
 include("Utils.php");
 if ($_SERVER["REQUEST_METHOD"] == "GET") {
-    if (str_starts_with($_SERVER["PATH_INFO"], "/download/") OR str_starts_with($_SERVER["PATH_INFO"], "//download/")) {
+    $path_info = @$_SERVER["PATH_INFO"];
+    if ($path_info AND (str_starts_with($path_info, "/download/") OR str_starts_with($path_info, "//download/"))) {
         $code = str_replace("/","",str_replace("/download/","",$_SERVER["PATH_INFO"]));
-        echo $code;
         $mysql = new MySQL();
         $password = @$_GET["password"];
         $result = $mysql->query("SELECT * FROM `list` WHERE `link`='$code';");
@@ -229,6 +229,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                 $size = $data["filesize"];
                 $data["pan123_pwd"] = $data["123_pwd"];
                 unset($data["123_pwd"]);
+                $data["pan123"] = $data["123"];
+                unset($data["123"]);
                 $prefix_list = ["B", "KB", "MB", "GB", "TB"];
                 $prefix_count = 0;
                 while ($size>1024){
@@ -269,6 +271,8 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                     $result2 = $mysql->query("SELECT * FROM `user` WHERE `username`='$username';");
                     $data["pan123_pwd"] = $data["123_pwd"];
                     unset($data["123_pwd"]);
+                    $data["pan123"] = $data["123"];
+                    unset($data["123"]);
                     while ($row2 = mysqli_fetch_assoc($result2)){
                         $data["nickname"] = $row2["nickname"];
                         goto fileInfoSkip2;
