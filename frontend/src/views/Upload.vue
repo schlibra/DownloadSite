@@ -35,6 +35,30 @@ const isSuccess = ref(false);
 
 document.title = "上传文件 | 下载站"
 onMounted(()=>{
+  if (isLogin.value){
+    axios.post("/?action=getInfo", {}, {
+      headers: {
+        Authorization: "Bearer "+isLogin.value
+      }
+    }).then(res => {
+      if (res.data.code !== 200){
+        confirm({
+          headline: "登录状态失效",
+          description: "登录状态失效："+res.data.msg,
+          confirmText: "重新登录",
+          cancelText: "退出登录",
+          onConfirm: () => {
+            localStorage.removeItem("token")
+            router.push("/login")
+          },
+          onCancel: () => {
+            localStorage.removeItem("token")
+            location.reload()
+          }
+        })
+      }
+    })
+  }
   device.value = /Android|webOS|iPhone|iPod|iPad|BlackBerry/i.test(navigator.userAgent) ? "mobile" : "pc";
   console.log(device.value)
   if (!isLogin.value){
