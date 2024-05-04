@@ -15,7 +15,7 @@ import '@mdui/icons/link'
 import '@mdui/icons/arrow-back'
 import '@mdui/icons/lock'
 import axios from "axios";
-import {alert, setColorScheme} from "mdui";
+import {alert, setColorScheme, confirm} from "mdui";
 
 const isLogin = ref(localStorage.getItem("token"));
 const exist = ref(true);
@@ -25,6 +25,30 @@ const password = ref("");
 const data = ref({});
 document.title = "文件详情 | 下载站"
 onMounted(()=>{
+  if (isLogin.value){
+    axios.post("/?action=getInfo", {}, {
+      headers: {
+        Authorization: "Bearer "+isLogin.value
+      }
+    }).then(res => {
+      if (res.data.code !== 200){
+        confirm({
+          headline: "登录状态失效",
+          description: "登录状态失效："+res.data.msg,
+          confirmText: "重新登录",
+          cancelText: "退出登录",
+          onConfirm: () => {
+            localStorage.removeItem("token")
+            router.push("/login")
+          },
+          onCancel: () => {
+            localStorage.removeItem("token")
+            location.reload()
+          }
+        })
+      }
+    })
+  }
   const path = location.href.replace(location.protocol+"//"+location.host,"");
   let s;
   if (path.startsWith("/file")) {
@@ -54,6 +78,11 @@ function gotoFile(id){
     query: {
       id
     }
+  })
+}
+function gotoHome() {
+  router.push({
+    path: "/"
   })
 }
 function login(){
@@ -113,6 +142,29 @@ function gotoDownload(){
   // return;
   location.href = "/download/" + link.value + (password.value.length ? "?password=" + password.value : "");
 }
+function copyText(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+  }
+}
+function goto_tsinbei() {
+  if (data.value.tsinbei_pwd!==""){
+    copyText(data.value.tsinbei_pwd);
+  }
+  location.href = data.value.tsinbei;
+}
+function goto_123() {
+  if (data.value.pan123_pwd!==""){
+    copyText(data.value.pan123_pwd);
+  }
+  location.href = data.value.pan123;
+}
+function goto_lanzou() {
+  if (data.value.lanzou_pwd!==""){
+    copyText(data.value.lanzou_pwd);
+  }
+  location.href = data.value.lanzou;
+}
 </script>
 
 <template>
@@ -141,13 +193,14 @@ function gotoDownload(){
       <h1>{{ data.filename }}</h1>
       <h2>文件大小：{{ data.filesize }}</h2>
       <h2>文件上传时间：{{ data.createTime }}</h2>
+      <h3>文件码：{{ link }}</h3>
       <h3>文件上传者：{{ data.nickname }}({{ data.username }})</h3>
       <h3>文件下载量：{{ data.downloadCount }}</h3>
       <h3 v-if="data.description.length>0">文件描述：{{ data.description }}</h3>
       <mdui-button full-width style="margin-bottom: 24px;" @click="gotoDownload()">本站下载</mdui-button>
-      <mdui-button full-width style="margin-bottom: 24px;">清北网盘下载<span v-if="data.tsinbei_pwd!==''">(提取码：{{ data.tsinbei_pwd }})</span><mdui-icon-link /></mdui-button>
-      <mdui-button full-width style="margin-bottom: 24px;">123网盘下载<span v-if="data.pan123_pwd!==''">(提取码：{{ data.pan123_pwd }})</span><mdui-icon-link /></mdui-button>
-      <mdui-button full-width style="margin-bottom: 24px;">蓝奏云下载<span v-if="data.lanzou_pwd!==''">(提取码：{{ data.lanzou_pwd }})</span><mdui-icon-link /></mdui-button>
+      <mdui-button @click="goto_tsinbei()" v-if="data.tsinbei!==''" full-width style="margin-bottom: 24px;">清北网盘下载<span v-if="data.tsinbei_pwd!==''">(提取码：{{ data.tsinbei_pwd }})</span><mdui-icon-link /></mdui-button>
+      <mdui-button @click="goto_123()" v-if="data.pan123!==''" full-width style="margin-bottom: 24px;">123网盘下载<span v-if="data.pan123_pwd!==''">(提取码：{{ data.pan123_pwd }})</span><mdui-icon-link /></mdui-button>
+      <mdui-button @click="goto_lanzou()" v-if="data.lanzou!==''" full-width style="margin-bottom: 24px;">蓝奏云下载<span v-if="data.lanzou_pwd!==''">(提取码：{{ data.lanzou_pwd }})</span><mdui-icon-link /></mdui-button>
     </div>
     <div style="text-align: center;margin-left: 10vw;margin-right: 10vw;margin-top: 80px;" v-if="!exist">
       <mdui-icon-error style="font-size: 160px;color: red"/>
