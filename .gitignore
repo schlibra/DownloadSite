@@ -10,3 +10,4 @@ backend/mysql.ini
 backend/backend.zip
 frontend/node_modules/
 frontend/dist/
+frontend/.vscode
