@@ -6,6 +6,7 @@ import Login from "@/views/Login.vue";
 import Register from "@/views/Register.vue";
 import User from "@/views/User.vue";
 import Upload from "@/views/Upload.vue";
+import NotFound from "@/views/NotFound.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -49,6 +50,23 @@ const router = createRouter({
       path: "/file/upload",
       name: "upload",
       component: Upload
+    },
+    {
+      path: "/404",
+      name: "not found",
+      component: NotFound
+    },
+    {
+      path: "/:a",
+      redirect: "/404"
+    },
+    {
+      path: "/:a/:b",
+      redirect: "/404"
+    },
+    {
+      path: "/:a/:b/:c",
+      redirect: "/404"
     }
   ]
 })
