@@ -18,6 +18,7 @@ import axios from "axios";
 import {alert, setColorScheme, confirm} from "mdui";
 
 const isLogin = ref(localStorage.getItem("token"));
+const isAdmin = ref(false)
 const exist = ref(true);
 const hasPassword = ref(false);
 const link = ref("");
@@ -31,7 +32,9 @@ onMounted(()=>{
         Authorization: "Bearer "+isLogin.value
       }
     }).then(res => {
-      if (res.data.code !== 200){
+      if (res.data.code === 200) {
+        isAdmin.value = res.data.data.admin === "1";
+      }else {
         confirm({
           headline: "登录状态失效",
           description: "登录状态失效："+res.data.msg,
@@ -165,6 +168,11 @@ function goto_lanzou() {
   }
   location.href = data.value.lanzou;
 }
+function admin() {
+  router.push({
+    path: "/admin"
+  })
+}
 </script>
 
 <template>
@@ -181,6 +189,7 @@ function goto_lanzou() {
       <mdui-menu>
         <mdui-menu-item v-show="!isLogin" @click="login()">登录</mdui-menu-item>
         <mdui-menu-item v-show="!isLogin" @click="register()">注册</mdui-menu-item>
+        <mdui-menu-item v-if="isAdmin" @click="admin()">系统设置</mdui-menu-item>
         <mdui-menu-item v-show="isLogin" @click="user()">个人中心</mdui-menu-item>
         <mdui-menu-item v-show="isLogin" @click="logout()">退出</mdui-menu-item>
       </mdui-menu>

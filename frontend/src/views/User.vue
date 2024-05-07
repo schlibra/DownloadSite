@@ -15,6 +15,7 @@ import {alert} from "mdui";
 import axios from "axios";
 
 const isLogin = ref(localStorage.getItem("token"));
+const isAdmin = ref(false)
 const avatar = ref("https://cdn.tsinbei.com/gravatar/avatar/");
 const data = ref({});
 document.title = "用户中心 | 下载站"
@@ -29,6 +30,7 @@ onMounted(()=>{
         data.value = res.data.data;
         data.value.sex = {"1": "男", "2": "女", "3": "其他", "4": "保密"}[data.value.sex];
         avatar.value = "https://cdn.tsinbei.com/gravatar/avatar/" + data.value.hash;
+        isAdmin.value = res.data.data.admin === "1";
         console.log(res.data);
       }else {
         alert({
@@ -94,6 +96,11 @@ function logout(){
 function back() {
   router.back();
 }
+function admin() {
+  router.push({
+    path: "/admin"
+  })
+}
 </script>
 
 <template>
@@ -110,6 +117,7 @@ function back() {
       <mdui-menu>
         <mdui-menu-item v-show="!isLogin" @click="login()">登录</mdui-menu-item>
         <mdui-menu-item v-show="!isLogin" @click="register()">注册</mdui-menu-item>
+        <mdui-menu-item v-if="isAdmin" @click="admin()">系统设置</mdui-menu-item>
         <mdui-menu-item v-show="isLogin" @click="user()">个人中心</mdui-menu-item>
         <mdui-menu-item v-show="isLogin" @click="logout()">退出</mdui-menu-item>
       </mdui-menu>
