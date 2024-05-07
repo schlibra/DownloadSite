@@ -7,6 +7,7 @@ import Register from "@/views/Register.vue";
 import User from "@/views/User.vue";
 import Upload from "@/views/Upload.vue";
 import NotFound from "@/views/NotFound.vue";
+import Admin from "@/views/Admin.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -67,6 +68,11 @@ const router = createRouter({
     {
       path: "/:a/:b/:c",
       redirect: "/404"
+    },
+    {
+      path: "/admin",
+      name: "admin",
+      component: Admin
     }
   ]
 })
