@@ -18,7 +18,7 @@ import {confirm} from "mdui/functions/confirm.js";
 
 const isLogin = ref(localStorage.getItem("token"));
 const list = ref([]);
-document.title = "文件列表 | 下载站"
+document.title = "页面不见了 | 下载站"
 onMounted(()=>{
   if (isLogin.value){
     axios.post("/?action=getInfo", {}, {
